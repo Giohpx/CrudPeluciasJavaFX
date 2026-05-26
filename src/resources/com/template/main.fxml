@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Arc?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="463.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane layoutX="-1.0" prefHeight="463.0" prefWidth="602.0" style="-fx-background-color: #8B0000; -fx-border-color: black; -fx-border-width: 5;">
+         <children>
+            <Button fx:id="btnDeletar" layoutX="510.0" layoutY="222.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="67.0" text="Deletar" textAlignment="RIGHT">
+               <font>
+                  <Font name="System Bold Italic" size="13.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnAlterar" layoutX="511.0" layoutY="262.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="67.0" text="Alterar" textAlignment="RIGHT">
+               <font>
+                  <Font name="System Bold Italic" size="13.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnSalvar" layoutX="511.0" layoutY="183.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="67.0" text="Salvar" textAlignment="RIGHT">
+               <font>
+                  <Font name="System Bold Italic" size="13.0" />
+               </font>
+            </Button>
+            <TableView layoutX="33.0" layoutY="237.0" prefHeight="200.0" prefWidth="453.0">
+              <columns>
+                <TableColumn fx:id="colID" prefWidth="75.0" text="ID" />
+                <TableColumn fx:id="colNome" prefWidth="75.0" text="Nome" />
+                  <TableColumn fx:id="colTipo" prefWidth="75.0" text="Tipo" />
+                  <TableColumn fx:id="colPelagem" prefWidth="75.0" text="Pelagem" />
+                  <TableColumn fx:id="colValor" prefWidth="75.0" text="Valor" />
+                  <TableColumn fx:id="colQuantidade" prefWidth="77.0" text="Quantidade" />
+              </columns>
+            </TableView>
+            <TextField layoutX="65.0" layoutY="20.0" prefHeight="11.0" prefWidth="94.0" />
+            <Text fill="WHITE" layoutX="40.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ID">
+               <font>
+                  <Font name="Avenir Next Condensed Italic" size="21.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="17.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nome">
+               <font>
+                  <Font name="Avenir Next Condensed Italic" size="21.0" />
+               </font>
+            </Text>
+            <Arc fill="#fdff1f" layoutX="546.0" layoutY="337.0" length="270.0" radiusX="34.0" radiusY="28.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" type="ROUND" />
+            <Circle layoutX="541.0" layoutY="319.0" radius="3.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fill="DODGERBLUE" layoutX="573.0" layoutY="337.0" radius="5.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fill="#00ff45" layoutX="591.0" layoutY="337.0" radius="5.0" stroke="BLACK" strokeType="INSIDE" />
+            <TextField layoutX="64.0" layoutY="66.0" prefHeight="26.0" prefWidth="99.0" />
+            <TextField layoutX="259.0" layoutY="67.0" prefHeight="26.0" prefWidth="99.0" />
+            <Text fill="WHITE" layoutX="190.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pelagem">
+               <font>
+                  <Font name="Avenir Next Condensed Italic" size="21.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="221.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tipo">
+               <font>
+                  <Font name="Avenir Next Condensed Italic" size="21.0" />
+               </font>
+            </Text>
+            <TextField layoutX="259.0" layoutY="18.0" prefHeight="26.0" prefWidth="99.0" />
+            <TextField layoutX="432.0" layoutY="19.0" prefHeight="26.0" prefWidth="99.0" />
+            <Text fill="WHITE" layoutX="390.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Valor">
+               <font>
+                  <Font name="Avenir Next Condensed Italic" size="21.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="383.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Quantidade">
+               <font>
+                  <Font name="Avenir Next Condensed Italic" size="21.0" />
+               </font>
+            </Text>
+            <TextField layoutX="472.0" layoutY="67.0" prefHeight="26.0" prefWidth="99.0" />
+            <GridPane layoutX="12.0" layoutY="14.0" prefHeight="96.0" prefWidth="569.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.3592987060547" minWidth="10.0" prefWidth="53.93748474121094" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="167.13526153564453" minWidth="10.0" prefWidth="109.56251525878906" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="167.13526153564453" minWidth="10.0" prefWidth="73.83859252929688" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.0" minWidth="10.0" prefWidth="123.791748046875" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="262.63006591796875" minWidth="0.0" prefWidth="100.99493408203125" />
+                  <ColumnConstraints halignment="CENTER" maxWidth="252.19259643554688" minWidth="10.0" prefWidth="133.901123046875" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="47.00517654418945" minHeight="10.0" prefHeight="44.63020706176758" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="54.45832443237305" minHeight="10.0" prefHeight="51.36979293823242" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+            <Text layoutX="39.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CRUD PELUCIAS" wrappingWidth="440.1199951171875">
+               <font>
+                  <Font name="Bangla MN" size="48.0" />
+               </font>
+               <fill>
+                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.944530189037323" green="1.0" blue="0.07000000029802322" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="1.0" green="0.5723370313644409" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </RadialGradient>
+               </fill>
+            </Text>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
