@@ -1,14 +1,14 @@
 package com.template;
 
-public class LojaPeluciaDTO {
+public class UsuarioDTO {
+
     private int id;
     private String nome;
     private String tipo;
-    private int quantidade;
+    private int qtde_pelucias;
     private String pelagem;
     private double valor;
 
-    // Getters e Setters
     public int getId() {
         return id;
     }
@@ -33,12 +33,12 @@ public class LojaPeluciaDTO {
         this.tipo = tipo;
     }
 
-    public int getQuantidade() {
-        return quantidade;
+    public int getQtde_pelucias() {
+        return qtde_pelucias;
     }
 
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
+    public void setQtde_pelucias(int qtde_pelucias) {
+        this.qtde_pelucias = qtde_pelucias;
     }
 
     public String getPelagem() {
@@ -56,4 +56,5 @@ public class LojaPeluciaDTO {
     public void setValor(double valor) {
         this.valor = valor;
     }
+
 }
