@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
@@ -69,7 +72,7 @@
                </font>
             </Text>
             <TextField fx:id="txtQtde_pelucias" layoutX="472.0" layoutY="67.0" prefHeight="26.0" prefWidth="99.0" />
-            <Text layoutX="39.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CRUD PELUCIAS" wrappingWidth="440.1199951171875">
+            <Text layoutX="37.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CRUD PELUCIAS" wrappingWidth="440.1199951171875">
                <font>
                   <Font name="Bangla MN" size="48.0" />
                </font>
@@ -92,28 +95,34 @@
             </Text>
             <VBox layoutX="512.0" layoutY="191.0" prefHeight="0.0" prefWidth="65.0">
                <children>
-                  <Button fx:id="btnDeletar" mnemonicParsing="false" onAction="#bntDeletarAction" prefHeight="69.0" prefWidth="65.0" text="Deletar" textAlignment="RIGHT">
+                  <Button fx:id="btnDeletar" mnemonicParsing="false" onAction="#bntDeletarAction" prefHeight="69.0" prefWidth="65.0" text="Deletar" textAlignment="RIGHT" textFill="#b21f1f" textOverrun="LEADING_ELLIPSIS">
                      <font>
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnAlterar" mnemonicParsing="false" onAction="#btnAlterarAction" prefHeight="26.0" prefWidth="67.0" text="Alterar" textAlignment="RIGHT">
+                  <Button fx:id="btnAlterar" mnemonicParsing="false" onAction="#btnAlterarAction" prefHeight="26.0" prefWidth="67.0" text="Alterar" textAlignment="JUSTIFY" textFill="#b21f1f" textOverrun="WORD_ELLIPSIS">
                      <font>
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnSalvar" mnemonicParsing="false" onAction="#btnSalvarAction" prefHeight="26.0" prefWidth="67.0" text="Salvar" textAlignment="RIGHT">
+                  <Button fx:id="btnSalvar" mnemonicParsing="false" onAction="#btnSalvarAction" prefHeight="26.0" prefWidth="67.0" text="Salvar" textAlignment="JUSTIFY" textFill="#b21f1f" textOverrun="WORD_ELLIPSIS">
                      <font>
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnSalvar1" mnemonicParsing="false" onAction="#btnLimparAction" prefHeight="26.0" prefWidth="67.0" text="Limpar" textAlignment="RIGHT">
+                  <Button fx:id="btnSalvar1" mnemonicParsing="false" onAction="#btnLimparAction" prefHeight="26.0" prefWidth="67.0" text="Limpar" textAlignment="JUSTIFY" textFill="#b21f1f" textOverrun="WORD_ELLIPSIS">
                      <font>
                         <Font name="System Bold Italic" size="13.0" />
                      </font>
                   </Button>
                </children>
             </VBox>
+            <ImageView fitHeight="62.0" fitWidth="72.0" layoutX="508.0" layoutY="131.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../Desktop/images%20(9).jpeg" />
+               </image>
+            </ImageView>
+            <Label fx:id="lblMensagem" layoutX="63.0" layoutY="122.0" textFill="WHITE" />
          </children>
       </Pane>
    </children>
