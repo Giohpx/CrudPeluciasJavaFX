@@ -1,12 +1,19 @@
-package com.template;
+package com.template.model.dao;
+
+import com.template.Conexao;
+import com.template.model.dto.UsuarioDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UsuarioDAO {
+
+    private static final Logger logger = Logger.getLogger(UsuarioDAO.class.getName());
 
     public ArrayList<UsuarioDTO> listar() {
 
@@ -34,7 +41,7 @@ public class UsuarioDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao listar pelúcias: " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao listar pelúcias.", e);
         }
 
         return lista;
@@ -57,10 +64,10 @@ public class UsuarioDAO {
 
             stmt.executeUpdate();
 
-            System.out.println("Pelúcia cadastrada com sucesso!");
+            logger.info("Pelúcia cadastrada com sucesso!");
 
         } catch (SQLException e) {
-            System.out.println("Erro ao inserir pelúcia: " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao inserir pelúcia.", e);
         }
     }
 
@@ -83,13 +90,13 @@ public class UsuarioDAO {
             int linhas = stmt.executeUpdate();
 
             if (linhas > 0) {
-                System.out.println("Pelúcia atualizada com sucesso!");
+                logger.info("Pelúcia atualizada com sucesso!");
             } else {
-                System.out.println("Nenhuma pelúcia encontrada com esse ID.");
+                logger.warning("Nenhuma pelúcia encontrada com esse ID para atualizar.");
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao atualizar: " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao atualizar pelúcia.", e);
         }
     }
 
@@ -107,14 +114,13 @@ public class UsuarioDAO {
             int linhas = stmt.executeUpdate();
 
             if (linhas > 0) {
-                System.out.println("Pelúcia removida com sucesso!");
-
+                logger.info("Pelúcia removida com sucesso!");
             } else {
-                System.out.println("ID não encontrado.");
+                logger.warning("ID não encontrado para deletar.");
             }
 
         } catch (SQLException e) {
-            System.out.println("Erro ao deletar: " + e.getMessage());
+            logger.log(Level.SEVERE, "Erro ao deletar pelúcia.", e);
         }
     }
 }

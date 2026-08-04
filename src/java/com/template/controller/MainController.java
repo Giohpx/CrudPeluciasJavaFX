@@ -1,5 +1,7 @@
-package com.template;
+package com.template.controller;
 
+import com.template.model.dao.UsuarioDAO;
+import com.template.model.dto.UsuarioDTO;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.collections.FXCollections;
@@ -160,6 +162,11 @@ public class MainController implements Initializable {
             }
         });
     }
+    private void btnCadastrarAction(ActionEvent event){
+        if(validarPelucia(txtNome.getText(), txtEmail.getText(), txt)){
+            UsuarioDTO novoUsuario
+        }
+    }
 
     private void configurarValidacaoVisual(TextField campo) {
         campo.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -225,7 +232,6 @@ public class MainController implements Initializable {
         }
     }
 
-    // NOVO: Método que realmente executa a alteração
     private void executarAlteracao() {
         UsuarioDTO pelucia = new UsuarioDTO();
         pelucia.setId(Integer.parseInt(txtID.getText()));
@@ -249,7 +255,7 @@ public class MainController implements Initializable {
         taskAlterar.setOnSucceeded(e -> {
             carregarUsuarios();
             isProcessando.set(false);
-            cancelarAcao(); // Limpa a mensagem após sucesso
+            cancelarAcao();
         });
 
         taskAlterar.setOnFailed(e -> {
@@ -266,11 +272,10 @@ public class MainController implements Initializable {
             return;
         }
 
-        // NOVO: Apenas solicita a confirmação em vez de executar direto
         acaoPendente = AcaoPendente.DELETAR;
         if (lblMensagem != null) {
             lblMensagem.setText("Pressione ENTER para confirmar a EXCLUSÃO ou ESC para cancelar.");
-            lblMensagem.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;"); // Cor Vermelha
+            lblMensagem.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
         }
     }
 
