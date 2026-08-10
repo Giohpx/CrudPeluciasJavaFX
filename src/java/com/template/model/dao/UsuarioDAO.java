@@ -1,6 +1,6 @@
 package com.template.model.dao;
 
-import com.template.Conexao;
+import com.template.model.Conexao;
 import com.template.model.dto.UsuarioDTO;
 
 import java.sql.Connection;
