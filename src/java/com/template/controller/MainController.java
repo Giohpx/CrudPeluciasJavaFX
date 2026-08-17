@@ -1,5 +1,5 @@
 package com.template.controller;
-
+import static com.template.util.DialogUtil.showWarning;
 import com.template.model.dao.UsuarioDAO;
 import com.template.model.dto.UsuarioDTO;
 import javafx.application.Platform;
@@ -15,7 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-
+import java.util.regex.Pattern;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -26,10 +26,12 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 
+import static com.template.util.Clear.limparCamposETabela;
+
 public class MainController implements Initializable {
 
     @FXML private Label lblContador;
-    @FXML private Label lblMensagem; // NOVO: Label para mensagens de confirmação
+    @FXML private Label lblMensagem;
     @FXML private TextField txtID;
     @FXML private TextField txtNome;
     @FXML private TextField txtTipo;
@@ -52,7 +54,6 @@ public class MainController implements Initializable {
 
     private BooleanProperty isProcessando = new SimpleBooleanProperty(false);
 
-    // NOVO: Enum e variável para controlar qual ação está aguardando confirmação
     private enum AcaoPendente { NENHUM, ALTERAR, DELETAR }
     private AcaoPendente acaoPendente = AcaoPendente.NENHUM;
 
@@ -145,17 +146,16 @@ public class MainController implements Initializable {
 
         carregarUsuarios();
 
-        // NOVO: Adiciona o listener global para capturar as teclas ENTER e ESC na Scene
         Platform.runLater(() -> {
             if (txtID.getScene() != null) {
                 txtID.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
                     if (acaoPendente != AcaoPendente.NENHUM) {
                         if (event.getCode() == KeyCode.ENTER) {
                             confirmarAcao();
-                            event.consume(); // Impede outros disparos do ENTER
+                            event.consume();
                         } else if (event.getCode() == KeyCode.ESCAPE) {
                             cancelarAcao();
-                            event.consume(); // Impede outros disparos do ESC
+                            event.consume();
                         }
                     }
                 });
@@ -175,7 +175,6 @@ public class MainController implements Initializable {
 
     @FXML
     private void btnSalvarAction(ActionEvent event) {
-        // Se houver uma ação pendente de outro botão, cancela.
         cancelarAcao();
 
         if (txtNome.getText().isEmpty() || txtValor.getText().isEmpty() || txtQtde_pelucias.getText().isEmpty()) {
@@ -219,11 +218,36 @@ public class MainController implements Initializable {
             return;
         }
 
-        // NOVO: Apenas solicita a confirmação em vez de executar direto
         acaoPendente = AcaoPendente.ALTERAR;
         if (lblMensagem != null) {
             lblMensagem.setText("Pressione ENTER para confirmar a ALTERAÇÃO ou ESC para cancelar.");
-            lblMensagem.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold;"); // Cor Laranja
+            lblMensagem.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold;");
+        }
+    }
+
+    public class PeluciaValidator {
+        //validar cadastro
+        public static boolean validarPelucia(String nome, String email, String senha, String login){
+            if(nome.isEmpty() || email.isEmpty() || senha.isEmpty() || login.isEmpty()){
+                showWarning("Preencha todos os campos antes de prosseguir.");
+                return false;
+            }
+            if(!validarEmail(email)){
+                showWarning("Digite um e-mail válido (exemplo@dominio.com)!");
+                return false;
+            }
+            return true;
+        }
+
+        public static boolean validarEmail(String email) { return Pattern.matches("^[\\w.-]+@[\\w.-]+\\.\\w+$",email); }
+
+        //validar pesquisa
+        public static boolean validarTermo(String termo){
+            if (termo.isEmpty()) {
+                showWarning("Digite um termo de pesquisa.");
+                return false;
+            }
+            return true;
         }
     }
 
@@ -292,7 +316,7 @@ public class MainController implements Initializable {
             carregarUsuarios();
             btnLimparAction(null);
             isProcessando.set(false);
-            cancelarAcao(); // Limpa a mensagem após sucesso
+            cancelarAcao();
         });
 
         taskDeletar.setOnFailed(e -> {
@@ -303,7 +327,6 @@ public class MainController implements Initializable {
         new Thread(taskDeletar).start();
     }
 
-    // NOVO: Lida com a confirmação
     private void confirmarAcao() {
         if (acaoPendente == AcaoPendente.ALTERAR) {
             executarAlteracao();
@@ -312,7 +335,6 @@ public class MainController implements Initializable {
         }
     }
 
-    // NOVO: Cancela e limpa os estados de confirmação
     private void cancelarAcao() {
         acaoPendente = AcaoPendente.NENHUM;
         if (lblMensagem != null) {
@@ -322,26 +344,13 @@ public class MainController implements Initializable {
 
     @FXML
     private void btnLimparAction(ActionEvent event) {
-        cancelarAcao(); // Limpa mensagens e status caso existam
-
-        txtID.clear();
-        txtNome.clear();
-        txtTipo.clear();
-        txtPelagem.clear();
-        txtValor.clear();
-        txtQtde_pelucias.clear();
-
-        txtNome.setStyle("");
-        txtTipo.setStyle("");
-        txtPelagem.setStyle("");
-        txtValor.setStyle("");
-        txtQtde_pelucias.setStyle("");
-        txtID.setStyle("-fx-background-color: #e0e0e0;");
+        cancelarAcao();
+        limparCamposETabela(tblUsuario, txtID, txtNome, txtTipo, txtPelagem, txtValor, txtQtde_pelucias);
     }
 
     @FXML
     private void carregarCampos() {
-        cancelarAcao(); // Limpa status pendentes ao selecionar outro item
+        cancelarAcao();
 
         UsuarioDTO objUsuarioDTO = tblUsuario.getSelectionModel().getSelectedItem();
 

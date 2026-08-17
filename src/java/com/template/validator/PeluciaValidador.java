@@ -2,6 +2,7 @@ package com.template.validator;
 
 import java.util.regex.Pattern;
 import com.template.util.DialogUtil;
+import java.util.regex.Pattern;
 
 public class PeluciaValidador {
 
