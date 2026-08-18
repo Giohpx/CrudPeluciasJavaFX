@@ -2,56 +2,47 @@ package com.template.validator;
 
 import java.util.regex.Pattern;
 import com.template.util.DialogUtil;
-import java.util.regex.Pattern;
 
 public class PeluciaValidador {
 
-    public boolean validarCampos(String nome_pelucia, String email_pelucia,
-                                 String senha_pelucia, String login_pelucia) {
+    public boolean validarCampos(String nome, String tipo, String pelagem, String valor, String quantidade) {
 
-        if (nome_pelucia.isEmpty() || email_pelucia.isEmpty()
-                || login_pelucia.isEmpty() || senha_pelucia.isEmpty()) {
+        // 1. Validação de Campos Obrigatórios
+        if (nome == null || nome.trim().isEmpty()
+                || tipo == null || tipo.trim().isEmpty()
+                || pelagem == null || pelagem.trim().isEmpty()
+                || valor == null || valor.trim().isEmpty()
+                || quantidade == null || quantidade.trim().isEmpty()) {
 
-            DialogUtil.showError("Preencha todos os campos antes de prosseguir!");
+            DialogUtil.showWarning("Preencha todos os campos antes de prosseguir!");
             return false;
         }
 
-        if (!validarEmail(email_pelucia)) {
-            DialogUtil.showError("Digite um e-mail válido (exemplo@dominio.com)!");
+        // 2. Validação: O Tipo NÃO pode ser numérico
+        if (validarEhNumerico(tipo)) {
+            DialogUtil.showWarning("O campo Tipo não pode ser um valor numérico!");
             return false;
         }
 
-        if (!validarSenha(senha_pelucia)) {
-            DialogUtil.showError("A senha deve possuir no mínimo 6 caracteres, contendo letras e números.");
+        // 3. Validação: Valor e Quantidade DEVEM ser numéricos
+        if (!validarEhNumerico(valor)) {
+            DialogUtil.showWarning("O campo Valor deve ser um número válido!");
             return false;
         }
 
-        if (!validarNome(nome_pelucia)) {
-            DialogUtil.showError("O nome deve conter entre 3 e 50 letras.");
-            return false;
-        }
-
-        if (!validarLogin(login_pelucia)) {
-            DialogUtil.showError("O login deve conter entre 4 e 20 caracteres (letras, números ou _).");
+        if (!validarEhNumerico(quantidade)) {
+            DialogUtil.showWarning("O campo Quantidade deve conter apenas números!");
             return false;
         }
 
         return true;
     }
 
-    public boolean validarEmail(String email_pelucia) {
-        return Pattern.matches("^[\\w.-]+@[\\w.-]+\\.\\w+$", email_pelucia);
-    }
-
-    public boolean validarSenha(String senha_pelucia) {
-        return Pattern.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{6,}$", senha_pelucia);
-    }
-
-    public boolean validarNome(String nome_pelucia) {
-        return Pattern.matches("^[a-zA-ZÀ-ÿ\\s]{3,50}$", nome_pelucia);
-    }
-
-    public boolean validarLogin(String login_pelucia) {
-        return Pattern.matches("^[a-zA-Z0-9_]{4,20}$", login_pelucia);
+    /**
+     * Verifica se a string contém apenas números (inteiros ou decimais)
+     */
+    public boolean validarEhNumerico(String texto) {
+        if (texto == null) return false;
+        return Pattern.matches("^\\d+(\\.\\d+)?$", texto.trim());
     }
 }
