@@ -1,7 +1,10 @@
 package com.template.controller;
+
 import static com.template.util.DialogUtil.showWarning;
 import com.template.model.dao.UsuarioDAO;
 import com.template.model.dto.UsuarioDTO;
+import com.template.validator.IPeluciaValidator;
+
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.collections.FXCollections;
@@ -15,7 +18,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import java.util.regex.Pattern;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -56,6 +59,13 @@ public class MainController implements Initializable {
 
     private enum AcaoPendente { NENHUM, ALTERAR, DELETAR }
     private AcaoPendente acaoPendente = AcaoPendente.NENHUM;
+
+    private final IPeluciaValidator peluciasValidator;
+
+    // Construtor com Injeção de Dependência
+    public MainController(IPeluciaValidator peluciasValidator) {
+        this.peluciasValidator = peluciasValidator;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -177,7 +187,13 @@ public class MainController implements Initializable {
     private void btnSalvarAction(ActionEvent event) {
         cancelarAcao();
 
-        if (txtNome.getText().isEmpty() || txtValor.getText().isEmpty() || txtQtde_pelucias.getText().isEmpty()) {
+        // Validação utilizando a interface injetada
+        if (!peluciasValidator.validarCampos(
+                txtNome.getText(),
+                txtTipo.getText(),
+                txtPelagem.getText(),
+                txtValor.getText(),
+                txtQtde_pelucias.getText())) {
             return;
         }
 
@@ -214,7 +230,17 @@ public class MainController implements Initializable {
 
     @FXML
     private void btnAlterarAction(ActionEvent event) {
-        if (txtID.getText().isEmpty() || txtNome.getText().isEmpty() || txtValor.getText().isEmpty()) {
+        if (txtID.getText().isEmpty()) {
+            showWarning("Selecione um registro para alterar.");
+            return;
+        }
+
+        if (!peluciasValidator.validarCampos(
+                txtNome.getText(),
+                txtTipo.getText(),
+                txtPelagem.getText(),
+                txtValor.getText(),
+                txtQtde_pelucias.getText())) {
             return;
         }
 
@@ -222,32 +248,6 @@ public class MainController implements Initializable {
         if (lblMensagem != null) {
             lblMensagem.setText("Pressione ENTER para confirmar a ALTERAÇÃO ou ESC para cancelar.");
             lblMensagem.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold;");
-        }
-    }
-
-    public class PeluciaValidator {
-        //validar cadastro
-        public static boolean validarPelucia(String nome, String email, String senha, String login){
-            if(nome.isEmpty() || email.isEmpty() || senha.isEmpty() || login.isEmpty()){
-                showWarning("Preencha todos os campos antes de prosseguir.");
-                return false;
-            }
-            if(!validarEmail(email)){
-                showWarning("Digite um e-mail válido (exemplo@dominio.com)!");
-                return false;
-            }
-            return true;
-        }
-
-        public static boolean validarEmail(String email) { return Pattern.matches("^[\\w.-]+@[\\w.-]+\\.\\w+$",email); }
-
-        //validar pesquisa
-        public static boolean validarTermo(String termo){
-            if (termo.isEmpty()) {
-                showWarning("Digite um termo de pesquisa.");
-                return false;
-            }
-            return true;
         }
     }
 

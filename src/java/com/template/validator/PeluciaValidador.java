@@ -1,42 +1,31 @@
 package com.template.validator;
 
-import java.util.regex.Pattern;
-import com.template.util.DialogUtil;
+import java.util.ArrayList;
+import java.util.List;
+import static com.template.util.DialogUtil.showWarning;
 
-public class PeluciaValidador {
+public class PeluciaValidador implements IPeluciaValidator {
 
-    public boolean validarCampos(String nome, String tipo, String pelagem, String valor, String quantidade) {
+    @Override
+    public boolean validarPelucia(String nome, String tipo, String pelagem, String valor, String quantidade) {
+        List<Validator<String>> validadores = new ArrayList<>();
 
-        if (nome == null || nome.trim().isEmpty()
-                || tipo == null || tipo.trim().isEmpty()
-                || pelagem == null || pelagem.trim().isEmpty()
-                || valor == null || valor.trim().isEmpty()
-                || quantidade == null || quantidade.trim().isEmpty()) {
+        validadores.add(new CampoObrigatorioValidador("Nome", nome));
+        validadores.add(new CampoObrigatorioValidador("Tipo", tipo));
+        validadores.add(new CampoObrigatorioValidador("Pelagem", pelagem));
+        validadores.add(new CampoObrigatorioValidador("Valor", valor));
+        validadores.add(new CampoObrigatorioValidador("Quantidade", quantidade));
 
-            DialogUtil.showWarning("Preencha todos os campos antes de prosseguir!");
-            return false;
-        }
+        validadores.add(new NumericoValidador("Valor", valor));
+        validadores.add(new NumericoValidador("Quantidade", quantidade));
 
-        if (validarEhNumerico(tipo)) {
-            DialogUtil.showWarning("O campo Tipo não pode ser um valor numérico!");
-            return false;
-        }
-
-        if (!validarEhNumerico(valor)) {
-            DialogUtil.showWarning("O campo Valor deve ser um número válido!");
-            return false;
-        }
-
-        if (!validarEhNumerico(quantidade)) {
-            DialogUtil.showWarning("O campo Quantidade deve conter apenas números!");
-            return false;
+        for (Validator<String> validador : validadores) {
+            if (!validador.validar(validador.getValor())) {
+                showWarning(validador.getMensagemErro());
+                return false;
+            }
         }
 
         return true;
-    }
-
-    public boolean validarEhNumerico(String texto) {
-        if (texto == null) return false;
-        return Pattern.matches("^\\d+(\\.\\d+)?$", texto.trim());
     }
 }
