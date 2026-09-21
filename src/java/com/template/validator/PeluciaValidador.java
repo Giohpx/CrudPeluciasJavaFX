@@ -2,30 +2,46 @@ package com.template.validator;
 
 import java.util.ArrayList;
 import java.util.List;
-import static com.template.util.DialogUtil.showWarning;
 
-public class PeluciaValidador implements IPeluciaValidator {
+public class PeluciaValidador implements IPeluciaValidador {
+
+    private String mensagemErro = "";
 
     @Override
-    public boolean validarPelucia(String nome, String tipo, String pelagem, String valor, String quantidade) {
-        List<Validator<String>> validadores = new ArrayList<>();
+    public boolean validarPelucia(
+            String nome,
+            String tipo,
+            String pelagem,
+            String valor,
+            String quantidade) {
 
-        validadores.add(new CampoObrigatorioValidador("Nome", nome));
-        validadores.add(new CampoObrigatorioValidador("Tipo", tipo));
-        validadores.add(new CampoObrigatorioValidador("Pelagem", pelagem));
-        validadores.add(new CampoObrigatorioValidador("Valor", valor));
-        validadores.add(new CampoObrigatorioValidador("Quantidade", quantidade));
+        List<Validador<String>> validadores = new ArrayList<>();
 
+        validadores.add(new CamposObrigatoriosValidador("Nome", nome));
+        validadores.add(new CamposObrigatoriosValidador("Tipo", tipo));
+        validadores.add(new CamposObrigatoriosValidador("Pelagem", pelagem));
+        validadores.add(new CamposObrigatoriosValidador("Valor", valor));
+        validadores.add(new CamposObrigatoriosValidador("Quantidade", quantidade));
         validadores.add(new NumericoValidador("Valor", valor));
-        validadores.add(new NumericoValidador("Quantidade", quantidade));
+        validadores.add(new NumeroValidador("Quantidade", quantidade));
 
-        for (Validator<String> validador : validadores) {
+        for (Validador<String> validador : validadores) {
+
             if (!validador.validar(validador.getValor())) {
-                showWarning(validador.getMensagemErro());
+
+                mensagemErro = validador.getMensagemErro();
+
                 return false;
             }
         }
 
+        mensagemErro = "";
+
         return true;
+    }
+
+    @Override
+    public String getMensagemErro() {
+        return mensagemErro;
     }
 }

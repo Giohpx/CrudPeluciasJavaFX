@@ -1,9 +1,10 @@
 package com.template.controller;
 
 import static com.template.util.DialogUtil.showWarning;
+
 import com.template.model.dao.UsuarioDAO;
 import com.template.model.dto.UsuarioDTO;
-import com.template.validator.IPeluciaValidator;
+import com.template.validator.IPeluciaValidador;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -33,49 +34,105 @@ import static com.template.util.Clear.limparCamposETabela;
 
 public class MainController implements Initializable {
 
-    @FXML private Label lblContador;
-    @FXML private Label lblMensagem;
-    @FXML private TextField txtID;
-    @FXML private TextField txtNome;
-    @FXML private TextField txtTipo;
-    @FXML private TextField txtPelagem;
-    @FXML private TextField txtValor;
-    @FXML private TextField txtQtde_pelucias;
+    @FXML
+    private Label lblContador;
 
-    @FXML private TableView<UsuarioDTO> tblUsuario;
+    @FXML
+    private Label lblMensagem;
 
-    @FXML private TableColumn<UsuarioDTO, Integer> colID;
-    @FXML private TableColumn<UsuarioDTO, String> colNome;
-    @FXML private TableColumn<UsuarioDTO, String> colTipo;
-    @FXML private TableColumn<UsuarioDTO, String> colPelagem;
-    @FXML private TableColumn<UsuarioDTO, Double> colValor;
-    @FXML private TableColumn<UsuarioDTO, Integer> colQuantidade;
+    @FXML
+    private TextField txtID;
 
-    @FXML private Button btnSalvar;
-    @FXML private Button btnAlterar;
-    @FXML private Button btnDeletar;
+    @FXML
+    private TextField txtNome;
 
-    private BooleanProperty isProcessando = new SimpleBooleanProperty(false);
+    @FXML
+    private TextField txtTipo;
 
-    private enum AcaoPendente { NENHUM, ALTERAR, DELETAR }
-    private AcaoPendente acaoPendente = AcaoPendente.NENHUM;
+    @FXML
+    private TextField txtPelagem;
 
-    private final IPeluciaValidator peluciasValidator;
+    @FXML
+    private TextField txtValor;
+
+    @FXML
+    private TextField txtQtde_pelucias;
+
+    @FXML
+    private TableView<UsuarioDTO> tblUsuario;
+
+    @FXML
+    private TableColumn<UsuarioDTO, Integer> colID;
+
+    @FXML
+    private TableColumn<UsuarioDTO, String> colNome;
+
+    @FXML
+    private TableColumn<UsuarioDTO, String> colTipo;
+
+    @FXML
+    private TableColumn<UsuarioDTO, String> colPelagem;
+
+    @FXML
+    private TableColumn<UsuarioDTO, Double> colValor;
+
+    @FXML
+    private TableColumn<UsuarioDTO, Integer> colQuantidade;
+
+    @FXML
+    private Button btnSalvar;
+
+    @FXML
+    private Button btnAlterar;
+
+    @FXML
+    private Button btnDeletar;
+
+    private BooleanProperty isProcessando =
+            new SimpleBooleanProperty(false);
+
+    private enum AcaoPendente {
+        NENHUM,
+        ALTERAR,
+        DELETAR
+    }
+
+    private AcaoPendente acaoPendente =
+            AcaoPendente.NENHUM;
+
+    private final IPeluciaValidador peluciasValidator;
 
     // Construtor com Injeção de Dependência
-    public MainController(IPeluciaValidator peluciasValidator) {
+    public MainController(IPeluciaValidador peluciasValidator) {
         this.peluciasValidator = peluciasValidator;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        colID.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-        colPelagem.setCellValueFactory(new PropertyValueFactory<>("pelagem"));
-        colValor.setCellValueFactory(new PropertyValueFactory<>("valor"));
-        colQuantidade.setCellValueFactory(new PropertyValueFactory<>("qtde_pelucias"));
+        colID.setCellValueFactory(
+                new PropertyValueFactory<>("id")
+        );
+
+        colNome.setCellValueFactory(
+                new PropertyValueFactory<>("nome")
+        );
+
+        colTipo.setCellValueFactory(
+                new PropertyValueFactory<>("tipo")
+        );
+
+        colPelagem.setCellValueFactory(
+                new PropertyValueFactory<>("pelagem")
+        );
+
+        colValor.setCellValueFactory(
+                new PropertyValueFactory<>("valor")
+        );
+
+        colQuantidade.setCellValueFactory(
+                new PropertyValueFactory<>("qtde_pelucias")
+        );
 
         configurarValidacaoVisual(txtNome);
         configurarValidacaoVisual(txtTipo);
@@ -84,144 +141,253 @@ public class MainController implements Initializable {
         configurarValidacaoVisual(txtQtde_pelucias);
 
         txtID.setEditable(false);
-        txtID.setStyle("-fx-background-color: #e0e0e0;");
-
-        txtID.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtID.setStyle("-fx-border-color: red; -fx-border-width: 2px; -fx-border-radius: 3px; -fx-background-color: #ffe6e6;");
-            } else {
-                txtID.setStyle("-fx-background-color: #e0e0e0;");
-            }
-        });
-
-        txtNome.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.matches(".*\\d.*")) {
-                txtNome.setText(newValue.replaceAll("\\d", ""));
-            }
-        });
-
-        txtTipo.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.matches(".*\\d.*")) {
-                txtTipo.setText(newValue.replaceAll("\\d", ""));
-            }
-        });
-
-        txtPelagem.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.matches(".*\\d.*")) {
-                txtPelagem.setText(newValue.replaceAll("\\d", ""));
-            }
-        });
-
-        txtQtde_pelucias.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                txtQtde_pelucias.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
-
-        txtValor.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*(\\.\\d*)?")) {
-                txtValor.setText(oldValue);
-            }
-        });
-
-        BooleanBinding camposInvalidos = Bindings.createBooleanBinding(() ->
-                        txtNome.getText().trim().isEmpty() ||
-                                txtTipo.getText().trim().isEmpty() ||
-                                txtPelagem.getText().trim().isEmpty() ||
-                                txtValor.getText().trim().isEmpty() ||
-                                txtQtde_pelucias.getText().trim().isEmpty(),
-                txtNome.textProperty(),
-                txtTipo.textProperty(),
-                txtPelagem.textProperty(),
-                txtValor.textProperty(),
-                txtQtde_pelucias.textProperty()
+        txtID.setStyle(
+                "-fx-background-color: #e0e0e0;"
         );
 
-        BooleanBinding semId = Bindings.createBooleanBinding(() ->
-                        txtID.getText().trim().isEmpty(),
-                txtID.textProperty()
+        txtID.focusedProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (newValue) {
+
+                        txtID.setStyle(
+                                "-fx-border-color: red;" +
+                                        "-fx-border-width: 2px;" +
+                                        "-fx-border-radius: 3px;" +
+                                        "-fx-background-color: #ffe6e6;"
+                        );
+
+                    } else {
+
+                        txtID.setStyle(
+                                "-fx-background-color: #e0e0e0;"
+                        );
+                    }
+                }
         );
+
+        txtNome.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (newValue.matches(".*\\d.*")) {
+
+                        txtNome.setText(
+                                newValue.replaceAll("\\d", "")
+                        );
+                    }
+                }
+        );
+
+        txtTipo.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (newValue.matches(".*\\d.*")) {
+
+                        txtTipo.setText(
+                                newValue.replaceAll("\\d", "")
+                        );
+                    }
+                }
+        );
+
+        txtPelagem.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (newValue.matches(".*\\d.*")) {
+
+                        txtPelagem.setText(
+                                newValue.replaceAll("\\d", "")
+                        );
+                    }
+                }
+        );
+
+        txtQtde_pelucias.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (!newValue.matches("\\d*")) {
+
+                        txtQtde_pelucias.setText(
+                                newValue.replaceAll("[^\\d]", "")
+                        );
+                    }
+                }
+        );
+
+        txtValor.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (!newValue.matches("\\d*(\\.\\d*)?")) {
+
+                        txtValor.setText(oldValue);
+                    }
+                }
+        );
+
+        BooleanBinding camposInvalidos =
+                Bindings.createBooleanBinding(
+                        () ->
+                                txtNome.getText().trim().isEmpty()
+                                        || txtTipo.getText().trim().isEmpty()
+                                        || txtPelagem.getText().trim().isEmpty()
+                                        || txtValor.getText().trim().isEmpty()
+                                        || txtQtde_pelucias.getText().trim().isEmpty(),
+
+                        txtNome.textProperty(),
+                        txtTipo.textProperty(),
+                        txtPelagem.textProperty(),
+                        txtValor.textProperty(),
+                        txtQtde_pelucias.textProperty()
+                );
+
+        BooleanBinding semId =
+                Bindings.createBooleanBinding(
+                        () ->
+                                txtID.getText().trim().isEmpty(),
+
+                        txtID.textProperty()
+                );
 
         if (btnSalvar != null) {
-            btnSalvar.disableProperty().bind(camposInvalidos.or(isProcessando));
+
+            btnSalvar.disableProperty().bind(
+                    camposInvalidos.or(isProcessando)
+            );
         }
 
         if (btnAlterar != null) {
-            btnAlterar.disableProperty().bind(camposInvalidos.or(semId).or(isProcessando));
+
+            btnAlterar.disableProperty().bind(
+                    camposInvalidos
+                            .or(semId)
+                            .or(isProcessando)
+            );
         }
 
         if (btnDeletar != null) {
-            btnDeletar.disableProperty().bind(semId.or(isProcessando));
+
+            btnDeletar.disableProperty().bind(
+                    semId.or(isProcessando)
+            );
         }
 
         carregarUsuarios();
 
         Platform.runLater(() -> {
+
             if (txtID.getScene() != null) {
-                txtID.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    if (acaoPendente != AcaoPendente.NENHUM) {
-                        if (event.getCode() == KeyCode.ENTER) {
-                            confirmarAcao();
-                            event.consume();
-                        } else if (event.getCode() == KeyCode.ESCAPE) {
-                            cancelarAcao();
-                            event.consume();
+
+                txtID.getScene().addEventFilter(
+                        KeyEvent.KEY_PRESSED,
+                        event -> {
+
+                            if (acaoPendente != AcaoPendente.NENHUM) {
+
+                                if (event.getCode() == KeyCode.ENTER) {
+
+                                    confirmarAcao();
+                                    event.consume();
+
+                                } else if (
+                                        event.getCode() == KeyCode.ESCAPE
+                                ) {
+
+                                    cancelarAcao();
+                                    event.consume();
+                                }
+                            }
                         }
-                    }
-                });
+                );
             }
         });
     }
 
-    private void configurarValidacaoVisual(TextField campo) {
-        campo.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null || newValue.trim().isEmpty()) {
-                campo.setStyle("-fx-border-color: red; -fx-border-width: 2px; -fx-border-radius: 3px;");
-            } else {
-                campo.setStyle("");
-            }
-        });
+    private void configurarValidacaoVisual(
+            TextField campo) {
+
+        campo.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (newValue == null
+                            || newValue.trim().isEmpty()) {
+
+                        campo.setStyle(
+                                "-fx-border-color: red;" +
+                                        "-fx-border-width: 2px;" +
+                                        "-fx-border-radius: 3px;"
+                        );
+
+                    } else {
+
+                        campo.setStyle("");
+                    }
+                }
+        );
     }
 
     @FXML
     private void btnSalvarAction(ActionEvent event) {
+
         cancelarAcao();
 
-        // Validação utilizando a interface injetada
-        if (!peluciasValidator.validarCampos(
+        if (!peluciasValidator.validarPelucia(
                 txtNome.getText(),
                 txtTipo.getText(),
                 txtPelagem.getText(),
                 txtValor.getText(),
                 txtQtde_pelucias.getText())) {
+
+            showWarning(peluciasValidator.getMensagemErro());
+
             return;
         }
 
         UsuarioDTO pelucia = new UsuarioDTO();
+
         pelucia.setNome(txtNome.getText());
         pelucia.setTipo(txtTipo.getText());
         pelucia.setPelagem(txtPelagem.getText());
-        pelucia.setValor(Double.parseDouble(txtValor.getText()));
-        pelucia.setQtde_pelucias(Integer.parseInt(txtQtde_pelucias.getText()));
+
+        pelucia.setValor(
+                Double.parseDouble(
+                        txtValor.getText()
+                )
+        );
+
+        pelucia.setQtde_pelucias(
+                Integer.parseInt(
+                        txtQtde_pelucias.getText()
+                )
+        );
 
         isProcessando.set(true);
 
-        Task<Void> taskSalvar = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                UsuarioDAO dao = new UsuarioDAO();
-                dao.inserir(pelucia);
-                return null;
-            }
-        };
+        Task<Void> taskSalvar =
+                new Task<Void>() {
+
+                    @Override
+                    protected Void call() throws Exception {
+
+                        UsuarioDAO dao =
+                                new UsuarioDAO();
+
+                        dao.inserir(pelucia);
+
+                        return null;
+                    }
+                };
 
         taskSalvar.setOnSucceeded(e -> {
+
             carregarUsuarios();
+
             btnLimparAction(null);
+
             isProcessando.set(false);
         });
 
         taskSalvar.setOnFailed(e -> {
+
             isProcessando.set(false);
         });
 
@@ -230,55 +396,110 @@ public class MainController implements Initializable {
 
     @FXML
     private void btnAlterarAction(ActionEvent event) {
+
         if (txtID.getText().isEmpty()) {
-            showWarning("Selecione um registro para alterar.");
+
+            showWarning(
+                    "Selecione um registro para alterar."
+            );
+
             return;
         }
 
-        if (!peluciasValidator.validarCampos(
+        if (!peluciasValidator.validarPelucia(
                 txtNome.getText(),
                 txtTipo.getText(),
                 txtPelagem.getText(),
                 txtValor.getText(),
                 txtQtde_pelucias.getText())) {
+
+            showWarning(peluciasValidator.getMensagemErro());
+
             return;
         }
 
-        acaoPendente = AcaoPendente.ALTERAR;
+        acaoPendente =
+                AcaoPendente.ALTERAR;
+
         if (lblMensagem != null) {
-            lblMensagem.setText("Pressione ENTER para confirmar a ALTERAÇÃO ou ESC para cancelar.");
-            lblMensagem.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold;");
+
+            lblMensagem.setText(
+                    "Pressione ENTER para confirmar a ALTERAÇÃO "
+                            + "ou ESC para cancelar."
+            );
+
+            lblMensagem.setStyle(
+                    "-fx-text-fill: #e67e22;" +
+                            "-fx-font-weight: bold;"
+            );
         }
     }
 
     private void executarAlteracao() {
-        UsuarioDTO pelucia = new UsuarioDTO();
-        pelucia.setId(Integer.parseInt(txtID.getText()));
-        pelucia.setNome(txtNome.getText());
-        pelucia.setTipo(txtTipo.getText());
-        pelucia.setPelagem(txtPelagem.getText());
-        pelucia.setValor(Double.parseDouble(txtValor.getText()));
-        pelucia.setQtde_pelucias(Integer.parseInt(txtQtde_pelucias.getText()));
+
+        UsuarioDTO pelucia =
+                new UsuarioDTO();
+
+        pelucia.setId(
+                Integer.parseInt(
+                        txtID.getText()
+                )
+        );
+
+        pelucia.setNome(
+                txtNome.getText()
+        );
+
+        pelucia.setTipo(
+                txtTipo.getText()
+        );
+
+        pelucia.setPelagem(
+                txtPelagem.getText()
+        );
+
+        pelucia.setValor(
+                Double.parseDouble(
+                        txtValor.getText()
+                )
+        );
+
+        pelucia.setQtde_pelucias(
+                Integer.parseInt(
+                        txtQtde_pelucias.getText()
+                )
+        );
 
         isProcessando.set(true);
 
-        Task<Void> taskAlterar = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                UsuarioDAO dao = new UsuarioDAO();
-                dao.atualizar(pelucia);
-                return null;
-            }
-        };
+        Task<Void> taskAlterar =
+                new Task<Void>() {
+
+                    @Override
+                    protected Void call() throws Exception {
+
+                        UsuarioDAO dao =
+                                new UsuarioDAO();
+
+                        dao.atualizar(pelucia);
+
+                        return null;
+                    }
+                };
 
         taskAlterar.setOnSucceeded(e -> {
+
             carregarUsuarios();
+
             isProcessando.set(false);
+
             cancelarAcao();
         });
 
         taskAlterar.setOnFailed(e -> {
+
             isProcessando.set(false);
+
             cancelarAcao();
         });
 
@@ -287,40 +508,68 @@ public class MainController implements Initializable {
 
     @FXML
     private void bntDeletarAction(ActionEvent event) {
+
         if (txtID.getText().isEmpty()) {
+
             return;
         }
 
-        acaoPendente = AcaoPendente.DELETAR;
+        acaoPendente =
+                AcaoPendente.DELETAR;
+
         if (lblMensagem != null) {
-            lblMensagem.setText("Pressione ENTER para confirmar a EXCLUSÃO ou ESC para cancelar.");
-            lblMensagem.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
+
+            lblMensagem.setText(
+                    "Pressione ENTER para confirmar a EXCLUSÃO "
+                            + "ou ESC para cancelar."
+            );
+
+            lblMensagem.setStyle(
+                    "-fx-text-fill: #e74c3c;" +
+                            "-fx-font-weight: bold;"
+            );
         }
     }
 
     private void executarExclusao() {
-        int id = Integer.parseInt(txtID.getText());
+
+        int id =
+                Integer.parseInt(
+                        txtID.getText()
+                );
 
         isProcessando.set(true);
 
-        Task<Void> taskDeletar = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                UsuarioDAO dao = new UsuarioDAO();
-                dao.deletar(id);
-                return null;
-            }
-        };
+        Task<Void> taskDeletar =
+                new Task<Void>() {
+
+                    @Override
+                    protected Void call() throws Exception {
+
+                        UsuarioDAO dao =
+                                new UsuarioDAO();
+
+                        dao.deletar(id);
+
+                        return null;
+                    }
+                };
 
         taskDeletar.setOnSucceeded(e -> {
+
             carregarUsuarios();
+
             btnLimparAction(null);
+
             isProcessando.set(false);
+
             cancelarAcao();
         });
 
         taskDeletar.setOnFailed(e -> {
+
             isProcessando.set(false);
+
             cancelarAcao();
         });
 
@@ -328,47 +577,99 @@ public class MainController implements Initializable {
     }
 
     private void confirmarAcao() {
+
         if (acaoPendente == AcaoPendente.ALTERAR) {
+
             executarAlteracao();
-        } else if (acaoPendente == AcaoPendente.DELETAR) {
+
+        } else if (
+                acaoPendente == AcaoPendente.DELETAR
+        ) {
+
             executarExclusao();
         }
     }
 
     private void cancelarAcao() {
-        acaoPendente = AcaoPendente.NENHUM;
+
+        acaoPendente =
+                AcaoPendente.NENHUM;
+
         if (lblMensagem != null) {
+
             lblMensagem.setText("");
         }
     }
 
     @FXML
     private void btnLimparAction(ActionEvent event) {
+
         cancelarAcao();
-        limparCamposETabela(tblUsuario, txtID, txtNome, txtTipo, txtPelagem, txtValor, txtQtde_pelucias);
+
+        limparCamposETabela(
+                tblUsuario,
+                txtID,
+                txtNome,
+                txtTipo,
+                txtPelagem,
+                txtValor,
+                txtQtde_pelucias
+        );
     }
 
     @FXML
     private void carregarCampos() {
+
         cancelarAcao();
 
-        UsuarioDTO objUsuarioDTO = tblUsuario.getSelectionModel().getSelectedItem();
+        UsuarioDTO objUsuarioDTO =
+                tblUsuario.getSelectionModel()
+                        .getSelectedItem();
 
         if (objUsuarioDTO != null) {
 
-            if (txtID.getText().equals(String.valueOf(objUsuarioDTO.getId()))) {
+            if (txtID.getText().equals(
+                    String.valueOf(
+                            objUsuarioDTO.getId()
+                    )
+            )) {
 
                 btnLimparAction(null);
-                tblUsuario.getSelectionModel().clearSelection();
+
+                tblUsuario.getSelectionModel()
+                        .clearSelection();
 
             } else {
 
-                txtID.setText(String.valueOf(objUsuarioDTO.getId()));
-                txtNome.setText(objUsuarioDTO.getNome());
-                txtTipo.setText(objUsuarioDTO.getTipo());
-                txtPelagem.setText(objUsuarioDTO.getPelagem());
-                txtValor.setText(String.valueOf(objUsuarioDTO.getValor()));
-                txtQtde_pelucias.setText(String.valueOf(objUsuarioDTO.getQtde_pelucias()));
+                txtID.setText(
+                        String.valueOf(
+                                objUsuarioDTO.getId()
+                        )
+                );
+
+                txtNome.setText(
+                        objUsuarioDTO.getNome()
+                );
+
+                txtTipo.setText(
+                        objUsuarioDTO.getTipo()
+                );
+
+                txtPelagem.setText(
+                        objUsuarioDTO.getPelagem()
+                );
+
+                txtValor.setText(
+                        String.valueOf(
+                                objUsuarioDTO.getValor()
+                        )
+                );
+
+                txtQtde_pelucias.setText(
+                        String.valueOf(
+                                objUsuarioDTO.getQtde_pelucias()
+                        )
+                );
 
                 txtNome.setStyle("");
                 txtTipo.setStyle("");
@@ -382,16 +683,24 @@ public class MainController implements Initializable {
     @FXML
     private void carregarUsuarios() {
 
-        UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+        UsuarioDAO objUsuarioDAO =
+                new UsuarioDAO();
 
-        ArrayList<UsuarioDTO> listaUsuarios = objUsuarioDAO.listar();
+        ArrayList<UsuarioDTO> listaUsuarios =
+                objUsuarioDAO.listar();
 
         tblUsuario.setItems(
-                FXCollections.observableArrayList(listaUsuarios)
+                FXCollections.observableArrayList(
+                        listaUsuarios
+                )
         );
 
         if (lblContador != null) {
-            lblContador.setText("Total de registros: " + listaUsuarios.size());
+
+            lblContador.setText(
+                    "Total de registros: "
+                            + listaUsuarios.size()
+            );
         }
     }
 }

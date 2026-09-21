@@ -1,6 +1,6 @@
 package com.template.validator;
 
-public interface Validator<T> {
+public interface Validador<T> {
     boolean validar(T valor);
     String getMensagemErro();
     T getValor();

@@ -1,6 +1,6 @@
 package com.template.validator;
 
-public class NumeroValidador implements Validator<String> {
+public class NumeroValidador implements Validador<String> {
     private final String nomeCampo;
     private final String valor;
 
