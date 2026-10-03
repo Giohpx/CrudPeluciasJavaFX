@@ -1,9 +1,8 @@
 package com.template.controller;
 
-import static com.template.util.DialogUtil.showWarning;
-
 import com.template.model.dao.UsuarioDAO;
 import com.template.model.dto.UsuarioDTO;
+import com.template.util.DialogUtil;
 import com.template.validator.IPeluciaValidador;
 
 import javafx.application.Platform;
@@ -134,11 +133,11 @@ public class MainController implements Initializable {
                 new PropertyValueFactory<>("qtde_pelucias")
         );
 
-        configurarValidacaoVisual(txtNome);
-        configurarValidacaoVisual(txtTipo);
-        configurarValidacaoVisual(txtPelagem);
-        configurarValidacaoVisual(txtValor);
-        configurarValidacaoVisual(txtQtde_pelucias);
+        configurarValidacaoVisual(txtNome, "Nome");
+        configurarValidacaoVisual(txtTipo, "Tipo");
+        configurarValidacaoVisual(txtPelagem, "Pelagem");
+        configurarValidacaoVisual(txtValor, "Valor");
+        configurarValidacaoVisual(txtQtde_pelucias, "Quantidade");
 
         txtID.setEditable(false);
         txtID.setStyle(
@@ -157,6 +156,11 @@ public class MainController implements Initializable {
                                         "-fx-background-color: #ffe6e6;"
                         );
 
+                        DialogUtil.showWarning(
+                                lblMensagem,
+                                "Não é permitido adicionar ou alterar o ID."
+                        );
+
                     } else {
 
                         txtID.setStyle(
@@ -166,63 +170,11 @@ public class MainController implements Initializable {
                 }
         );
 
-        txtNome.textProperty().addListener(
-                (observable, oldValue, newValue) -> {
-
-                    if (newValue.matches(".*\\d.*")) {
-
-                        txtNome.setText(
-                                newValue.replaceAll("\\d", "")
-                        );
-                    }
-                }
-        );
-
-        txtTipo.textProperty().addListener(
-                (observable, oldValue, newValue) -> {
-
-                    if (newValue.matches(".*\\d.*")) {
-
-                        txtTipo.setText(
-                                newValue.replaceAll("\\d", "")
-                        );
-                    }
-                }
-        );
-
-        txtPelagem.textProperty().addListener(
-                (observable, oldValue, newValue) -> {
-
-                    if (newValue.matches(".*\\d.*")) {
-
-                        txtPelagem.setText(
-                                newValue.replaceAll("\\d", "")
-                        );
-                    }
-                }
-        );
-
-        txtQtde_pelucias.textProperty().addListener(
-                (observable, oldValue, newValue) -> {
-
-                    if (!newValue.matches("\\d*")) {
-
-                        txtQtde_pelucias.setText(
-                                newValue.replaceAll("[^\\d]", "")
-                        );
-                    }
-                }
-        );
-
-        txtValor.textProperty().addListener(
-                (observable, oldValue, newValue) -> {
-
-                    if (!newValue.matches("\\d*(\\.\\d*)?")) {
-
-                        txtValor.setText(oldValue);
-                    }
-                }
-        );
+        configurarCampoTextoSemNumeros(txtNome, "Nome");
+        configurarCampoTextoSemNumeros(txtTipo, "Tipo");
+        configurarCampoTextoSemNumeros(txtPelagem, "Pelagem");
+        configurarCampoQuantidade();
+        configurarCampoValor();
 
         BooleanBinding camposInvalidos =
                 Bindings.createBooleanBinding(
@@ -303,7 +255,8 @@ public class MainController implements Initializable {
     }
 
     private void configurarValidacaoVisual(
-            TextField campo) {
+            TextField campo,
+            String nomeCampo) {
 
         campo.textProperty().addListener(
                 (observable, oldValue, newValue) -> {
@@ -317,9 +270,88 @@ public class MainController implements Initializable {
                                         "-fx-border-radius: 3px;"
                         );
 
+                        DialogUtil.showWarning(
+                                lblMensagem,
+                                "O campo " + nomeCampo
+                                        + " deve ser preenchido."
+                        );
+
                     } else {
 
                         campo.setStyle("");
+                    }
+                }
+        );
+    }
+
+    private void configurarCampoTextoSemNumeros(
+            TextField campo,
+            String nomeCampo) {
+
+        campo.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (newValue.matches(".*\\d.*")) {
+
+                        DialogUtil.showWarning(
+                                lblMensagem,
+                                "Não adicione números no campo "
+                                        + nomeCampo + "."
+                        );
+
+                        campo.setText(
+                                newValue.replaceAll("\\d", "")
+                        );
+                    }
+                }
+        );
+    }
+
+    private void configurarCampoQuantidade() {
+
+        txtQtde_pelucias.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (!newValue.matches("\\d*")) {
+
+                        DialogUtil.showWarning(
+                                lblMensagem,
+                                "Use apenas números inteiros no campo Quantidade."
+                        );
+
+                        txtQtde_pelucias.setText(
+                                newValue.replaceAll("[^\\d]", "")
+                        );
+                    }
+                }
+        );
+    }
+
+    private void configurarCampoValor() {
+
+        txtValor.textProperty().addListener(
+                (observable, oldValue, newValue) -> {
+
+                    if (newValue.contains(",")) {
+
+                        DialogUtil.showWarning(
+                                lblMensagem,
+                                "Não adicione vírgula no campo Valor. "
+                                        + "Use ponto. Ex: 10.50"
+                        );
+
+                    } else if (!newValue.matches("\\d*(\\.\\d*)?")) {
+
+                        DialogUtil.showWarning(
+                                lblMensagem,
+                                "Use apenas números no campo Valor. "
+                                        + "Para centavos, use ponto. Ex: 10.50"
+                        );
+                    }
+
+                    if (!newValue.matches("\\d*(\\.\\d*)?")) {
+
+                        txtValor.setText(oldValue);
                     }
                 }
         );
@@ -337,7 +369,14 @@ public class MainController implements Initializable {
                 txtValor.getText(),
                 txtQtde_pelucias.getText())) {
 
-            showWarning(peluciasValidator.getMensagemErro());
+            DialogUtil.showWarning(
+                    lblMensagem,
+                    peluciasValidator.getMensagemErro()
+            );
+
+            DialogUtil.showWarning(
+                    peluciasValidator.getMensagemErro()
+            );
 
             return;
         }
@@ -383,10 +422,20 @@ public class MainController implements Initializable {
 
             btnLimparAction(null);
 
+            DialogUtil.showInfo(
+                    lblMensagem,
+                    "Pelúcia adicionada com sucesso!"
+            );
+
             isProcessando.set(false);
         });
 
         taskSalvar.setOnFailed(e -> {
+
+            DialogUtil.showError(
+                    lblMensagem,
+                    "Não foi possível adicionar a pelúcia."
+            );
 
             isProcessando.set(false);
         });
@@ -399,7 +448,8 @@ public class MainController implements Initializable {
 
         if (txtID.getText().isEmpty()) {
 
-            showWarning(
+            DialogUtil.showWarning(
+                    lblMensagem,
                     "Selecione um registro para alterar."
             );
 
@@ -413,7 +463,14 @@ public class MainController implements Initializable {
                 txtValor.getText(),
                 txtQtde_pelucias.getText())) {
 
-            showWarning(peluciasValidator.getMensagemErro());
+            DialogUtil.showWarning(
+                    lblMensagem,
+                    peluciasValidator.getMensagemErro()
+            );
+
+            DialogUtil.showWarning(
+                    peluciasValidator.getMensagemErro()
+            );
 
             return;
         }
@@ -494,6 +551,11 @@ public class MainController implements Initializable {
             isProcessando.set(false);
 
             cancelarAcao();
+
+            DialogUtil.showInfo(
+                    lblMensagem,
+                    "Pelúcia alterada com sucesso!"
+            );
         });
 
         taskAlterar.setOnFailed(e -> {
@@ -501,6 +563,11 @@ public class MainController implements Initializable {
             isProcessando.set(false);
 
             cancelarAcao();
+
+            DialogUtil.showError(
+                    lblMensagem,
+                    "Não foi possível alterar a pelúcia."
+            );
         });
 
         new Thread(taskAlterar).start();
@@ -564,6 +631,11 @@ public class MainController implements Initializable {
             isProcessando.set(false);
 
             cancelarAcao();
+
+            DialogUtil.showInfo(
+                    lblMensagem,
+                    "Pelúcia excluída com sucesso!"
+            );
         });
 
         taskDeletar.setOnFailed(e -> {
@@ -571,6 +643,11 @@ public class MainController implements Initializable {
             isProcessando.set(false);
 
             cancelarAcao();
+
+            DialogUtil.showError(
+                    lblMensagem,
+                    "Não foi possível excluir a pelúcia."
+            );
         });
 
         new Thread(taskDeletar).start();
@@ -595,10 +672,7 @@ public class MainController implements Initializable {
         acaoPendente =
                 AcaoPendente.NENHUM;
 
-        if (lblMensagem != null) {
-
-            lblMensagem.setText("");
-        }
+        DialogUtil.clearMessage(lblMensagem);
     }
 
     @FXML
@@ -615,6 +689,8 @@ public class MainController implements Initializable {
                 txtValor,
                 txtQtde_pelucias
         );
+
+        DialogUtil.clearMessage(lblMensagem);
     }
 
     @FXML
